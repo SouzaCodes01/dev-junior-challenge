@@ -40,7 +40,6 @@ Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrã
 - Usei `fetch` nativo do Node em vez de uma biblioteca HTTP, para não adicionar dependência.
 - Usei NestJS 11 com Jest, o formato mais comum na documentação.
 - Não bloqueei check-ins repetidos do mesmo CPF: o enunciado não pede, e é uma regra de negócio que eu validaria com a recepção.
-- Usei o assistente de IA Claude como apoio no desenvolvimento e para estudar o código.
 
 ## O que faria com mais tempo
 - Persistir em PostgreSQL (o `docker-compose.yml` já tem o banco) e subir api/web via Docker Compose.
