@@ -53,8 +53,8 @@ describe('CheckinService', () => {
   });
 
   describe('fila do dia', () => {
-    // Só o relógio (Date) é falso; o resto do Jest continua normal.
-    beforeEach(() => jest.useFakeTimers({ toFake: ['Date'] }));
+    // Relógio falso: permite "viajar no tempo" com jest.setSystemTime.
+    beforeEach(() => jest.useFakeTimers());
     afterEach(() => jest.useRealTimers());
 
     it('lista só os check-ins de hoje e esquece os de ontem', async () => {
