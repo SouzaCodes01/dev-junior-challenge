@@ -30,7 +30,10 @@ Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrã
 - **API (NestJS + TypeScript):** módulo `cadastro` (consome o `mock-service` com `fetch`) e módulo `checkin` (controller, service, DTO). O CPF aceita máscara (`111.111.111-11`); é normalizado e validado (11 dígitos).
 - **Erros claros:** CPF inexistente devolve 404 com a mensagem "CPF não encontrado no cadastro"; cadastro indisponível devolve 502.
 - **Front-end (React + Vite + TypeScript):** formulário de CPF, mensagem de sucesso/erro e lista da fila, atualizada após cada check-in.
-- **Teste:** 3 testes unitários (Jest) do `CheckinService`: registra com o nome do cadastro, não registra se o CPF não existe e mantém a ordem de chegada.
+- **Testes (12, Jest):**
+  - `CheckinService` (3): registra com o nome do cadastro, não registra se o CPF não existe e mantém a ordem de chegada.
+  - `CadastroService` (4), com `fetch` simulado: paciente encontrado (200), CPF inexistente (404), cadastro fora do ar e resposta 500 (ambos viram 502).
+  - `CreateCheckinDto` (5): aceita 11 dígitos e CPF com máscara (normalizado), rejeita CPF curto, longo, vazio ou ausente.
 
 ## Onde guardei os dados
 **Em memória** (um array dentro do `CheckinService`). Escolhi assim para priorizar o fluxo completo funcionando no tempo estimado. A fila é perdida quando a API reinicia.
