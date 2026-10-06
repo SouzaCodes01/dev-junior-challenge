@@ -1,0 +1,10 @@
+body { font-family: system-ui, sans-serif; margin: 0; background: #f4f6f8; color: #1d2733; }
+main { max-width: 520px; margin: 40px auto; padding: 0 16px; }
+form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+label { width: 100%; font-weight: 600; }
+input { flex: 1; padding: 10px; font-size: 16px; border: 1px solid #9aa5b1; border-radius: 6px; }
+button { padding: 10px 16px; font-size: 16px; border: 0; border-radius: 6px; background: #0b6bcb; color: #fff; cursor: pointer; }
+button:disabled { background: #9aa5b1; cursor: not-allowed; }
+.erro { color: #b42318; background: #fee4e2; padding: 10px; border-radius: 6px; }
+.sucesso { color: #067647; background: #d1fadf; padding: 10px; border-radius: 6px; }
+li { margin: 6px 0; }
