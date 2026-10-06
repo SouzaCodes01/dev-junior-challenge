@@ -16,7 +16,7 @@ cd web && npm install && npm run dev
 
 Abra http://localhost:5173, digite um CPF de teste (ex.: `11111111111`) e clique em "Fazer check-in".
 
-Testes unitários da API: `cd api && npm test`.
+Testes da API: `cd api && npm test` (unitários) e `npm run test:e2e` (endpoints).
 
 Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrão `http://localhost:4000`), `PORT` na API (padrão `3000`) e `VITE_API_URL` no front (padrão `http://localhost:3000`, veja `web/.env.example`).
 
@@ -30,10 +30,11 @@ Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrã
 - **API (NestJS + TypeScript):** módulo `cadastro` (consome o `mock-service` com `fetch`) e módulo `checkin` (controller, service, DTO). O CPF aceita máscara (`111.111.111-11`); é normalizado e validado (11 dígitos).
 - **Erros claros:** CPF inexistente devolve 404 com a mensagem "CPF não encontrado no cadastro"; cadastro indisponível devolve 502.
 - **Front-end (React + Vite + TypeScript):** formulário de CPF, mensagem de sucesso/erro e lista da fila, atualizada após cada check-in.
-- **Testes (12, Jest):**
+- **Testes (15, Jest):**
   - `CheckinService` (3): registra com o nome do cadastro, não registra se o CPF não existe e mantém a ordem de chegada.
   - `CadastroService` (4), com `fetch` simulado: paciente encontrado (200), CPF inexistente (404), cadastro fora do ar e resposta 500 (ambos viram 502).
   - `CreateCheckinDto` (5): aceita 11 dígitos e CPF com máscara (normalizado), rejeita CPF curto, longo, vazio ou ausente.
+  - e2e dos endpoints (3), com o cadastro simulado: `POST` + `GET /checkins` em ordem de chegada, 404 para CPF inexistente (sem entrar na fila) e 400 para CPF inválido.
 
 ## Onde guardei os dados
 **Em memória** (um array dentro do `CheckinService`). Escolhi assim para priorizar o fluxo completo funcionando no tempo estimado. A fila é perdida quando a API reinicia.
@@ -47,5 +48,5 @@ Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrã
 ## O que faria com mais tempo
 - Persistir em PostgreSQL (o `docker-compose.yml` já tem o banco) e subir api/web via Docker Compose.
 - Definir a regra para check-in repetido e "fila do dia" (zerar à meia-noite).
-- Testes do front (React Testing Library) e teste e2e da API.
+- Testes do front (React Testing Library).
 - Atualizar a fila automaticamente (polling) para a recepção ver novos check-ins sem recarregar.
