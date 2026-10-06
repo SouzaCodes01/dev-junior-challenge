@@ -16,7 +16,8 @@ export interface Paciente {
 @Injectable()
 export class CadastroService {
   private readonly logger = new Logger(CadastroService.name);
-  private readonly baseUrl = process.env.CADASTRO_URL ?? 'http://localhost:4000';
+  private readonly baseUrl =
+    process.env.CADASTRO_URL ?? 'http://localhost:4000';
 
   async buscarPacientePorCpf(cpf: string): Promise<Paciente> {
     let resposta: Response;

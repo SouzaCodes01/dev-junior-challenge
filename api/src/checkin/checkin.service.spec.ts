@@ -21,7 +21,11 @@ describe('CheckinService', () => {
 
     const checkin = await service.criar('11111111111');
 
-    expect(checkin).toMatchObject({ id: 1, nome: 'Ana Souza', cpf: '11111111111' });
+    expect(checkin).toMatchObject({
+      id: 1,
+      nome: 'Ana Souza',
+      cpf: '11111111111',
+    });
     expect(service.listar()).toHaveLength(1);
   });
 
@@ -42,6 +46,9 @@ describe('CheckinService', () => {
     await service.criar('1');
     await service.criar('2');
 
-    expect(service.listar().map((c) => c.nome)).toEqual(['Primeiro', 'Segundo']);
+    expect(service.listar().map((c) => c.nome)).toEqual([
+      'Primeiro',
+      'Segundo',
+    ]);
   });
 });
