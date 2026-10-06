@@ -11,7 +11,7 @@ export interface Checkin {
 // Extrai a mensagem de erro que a API (NestJS) devolve no corpo da resposta.
 async function mensagemDeErro(resposta: Response): Promise<string> {
   try {
-    const corpo = await resposta.json();
+    const corpo = (await resposta.json()) as { message: string | string[] };
     return Array.isArray(corpo.message) ? corpo.message.join(', ') : corpo.message;
   } catch {
     return 'Erro inesperado. Tente novamente.';

@@ -9,6 +9,18 @@ function formatarHora(iso: string) {
   });
 }
 
+// Mostra o CPF com máscara enquanto a pessoa digita: 111.111.111-11
+function mascararCpf(valor: string) {
+  const d = valor.replace(/\D/g, '').slice(0, 11);
+  return d
+    .replace(/^(\d{3})(\d)/, '$1.$2')
+    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1-$2');
+}
+
+// De quanto em quanto tempo a fila é atualizada sozinha (ms).
+const INTERVALO_FILA = 5000;
+
 export default function App() {
   // Estado = dados que, ao mudar, fazem a tela ser redesenhada.
   const [cpf, setCpf] = useState('');
@@ -25,13 +37,26 @@ export default function App() {
     }
   }
 
-  // Roda uma vez quando a tela abre ([] = sem dependências).
+  // Carrega a fila ao abrir a tela e a atualiza sozinha, para a recepção ver
+  // novos check-ins sem recarregar. O `return` desliga o timer ao sair da tela.
   useEffect(() => {
-    listarFila()
-      .then(setFila)
-      .catch(() =>
-        setErro('Não foi possível carregar a fila. A API está no ar?'),
-      );
+    let primeiraCarga = true;
+    function atualizar() {
+      listarFila()
+        .then(setFila)
+        .catch(() => {
+          // Só avisa na primeira vez; falhas do polling não enchem a tela de erros.
+          if (primeiraCarga) {
+            setErro('Não foi possível carregar a fila. A API está no ar?');
+          }
+        })
+        .finally(() => {
+          primeiraCarga = false;
+        });
+    }
+    atualizar();
+    const timer = setInterval(atualizar, INTERVALO_FILA);
+    return () => clearInterval(timer);
   }, []);
 
   async function aoEnviar(evento: FormEvent) {
@@ -60,12 +85,12 @@ export default function App() {
         <input
           id="cpf"
           value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          placeholder="Somente números"
+          onChange={(e) => setCpf(mascararCpf(e.target.value))}
+          placeholder="000.000.000-00"
           inputMode="numeric"
           maxLength={14}
         />
-        <button type="submit" disabled={enviando || cpf.trim() === ''}>
+        <button type="submit" disabled={enviando || cpf.replace(/\D/g, '').length !== 11}>
           {enviando ? 'Enviando...' : 'Fazer check-in'}
         </button>
       </form>
