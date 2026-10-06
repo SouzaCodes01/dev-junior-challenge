@@ -24,14 +24,15 @@ Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrã
 | Método | Rota | Descrição |
 |---|---|---|
 | POST | `/checkins` | Body `{ "cpf": "11111111111" }`. Consulta o cadastro e registra na fila. 201 com o check-in; 400 se o CPF não tiver 11 dígitos; 404 se o CPF não existir; 502 se o cadastro estiver fora do ar. |
-| GET | `/checkins` | Lista a fila em ordem de chegada. |
+| GET | `/checkins` | Lista a fila **do dia** (só os check-ins de hoje) em ordem de chegada. |
 
 ## O que foi feito
 - **API (NestJS + TypeScript):** módulo `cadastro` (consome o `mock-service` com `fetch`) e módulo `checkin` (controller, service, DTO). O CPF aceita máscara (`111.111.111-11`); é normalizado e validado (11 dígitos).
 - **Erros claros:** CPF inexistente devolve 404 com a mensagem "CPF não encontrado no cadastro"; cadastro indisponível devolve 502.
 - **Front-end (React + Vite + TypeScript):** formulário de CPF com máscara (o botão só ativa com 11 dígitos), mensagem de sucesso/erro e lista da fila. A fila é atualizada após cada check-in e também sozinha, a cada 5 segundos (polling), para a recepção ver novos check-ins sem recarregar.
-- **Testes (15, Jest):**
-  - `CheckinService` (3): registra com o nome do cadastro, não registra se o CPF não existe e mantém a ordem de chegada.
+- **Fila do dia:** `GET /checkins` devolve só os check-ins de hoje; quando o dia vira, a fila "zera" sozinha (o dia segue o fuso do servidor).
+- **Testes (17, Jest):**
+  - `CheckinService` (5): registra com o nome do cadastro, não registra se o CPF não existe, mantém a ordem de chegada, lista só os de hoje e zera na virada do dia (relógio simulado).
   - `CadastroService` (4), com `fetch` simulado: paciente encontrado (200), CPF inexistente (404), cadastro fora do ar e resposta 500 (ambos viram 502).
   - `CreateCheckinDto` (5): aceita 11 dígitos e CPF com máscara (normalizado), rejeita CPF curto, longo, vazio ou ausente.
   - e2e dos endpoints (3), com o cadastro simulado: `POST` + `GET /checkins` em ordem de chegada, 404 para CPF inexistente (sem entrar na fila) e 400 para CPF inválido.
@@ -47,5 +48,6 @@ Configuração opcional (já há valores padrão): `CADASTRO_URL` na API (padrã
 
 ## O que faria com mais tempo
 - Persistir em PostgreSQL (o `docker-compose.yml` já tem o banco) e subir api/web via Docker Compose.
-- Definir a regra para check-in repetido e "fila do dia" (zerar à meia-noite).
+- Definir a regra para check-in repetido (hoje o mesmo CPF pode entrar mais de uma vez).
+- Tornar o fuso do "dia" configurável (hoje usa o do servidor).
 - Testes do front (React Testing Library).

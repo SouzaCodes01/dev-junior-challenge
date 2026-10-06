@@ -25,7 +25,12 @@ export class CheckinService {
     return checkin;
   }
 
+  // Só os check-ins de HOJE, em ordem de chegada (o primeiro a chegar fica no topo).
+  // "Hoje" segue o fuso do servidor; ao virar o dia a fila "zera" sozinha.
   listar(): Checkin[] {
-    return [...this.fila]; // ordem de chegada (o primeiro a chegar fica no topo)
+    const hoje = new Date().toDateString();
+    return this.fila.filter(
+      (c) => new Date(c.chegadaEm).toDateString() === hoje,
+    );
   }
 }
