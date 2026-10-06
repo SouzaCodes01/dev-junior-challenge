@@ -27,7 +27,11 @@ export default function App() {
 
   // Roda uma vez quando a tela abre ([] = sem dependências).
   useEffect(() => {
-    carregarFila();
+    listarFila()
+      .then(setFila)
+      .catch(() =>
+        setErro('Não foi possível carregar a fila. A API está no ar?'),
+      );
   }, []);
 
   async function aoEnviar(evento: FormEvent) {
